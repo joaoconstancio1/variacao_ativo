@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:variacao_ativo/modules/home/domain/usecases/get_stocks_usecase.dart';
@@ -11,10 +12,11 @@ import 'modules/home/presenter/pages/homepage.dart';
 class AppModule extends Module {
   @override
   final List<Bind> binds = [
+    Bind((i) => Dio()),
     Bind((i) => GetStocksCubit(i())),
     Bind((i) => GetStocksUsecaseImpl(i())),
     Bind((i) => GetStocksRepositoryImpl(i())),
-    Bind((i) => GetStocksDatasourceExt()),
+    Bind((i) => GetStocksDatasourceExt(i())),
   ];
 
   @override

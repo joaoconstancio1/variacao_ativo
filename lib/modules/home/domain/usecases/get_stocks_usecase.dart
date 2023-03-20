@@ -4,7 +4,7 @@ import 'package:variacao_ativo/modules/home/domain/repositories/get_stocks_repos
 import 'package:variacao_ativo/modules/home/data/models/stocks_model.dart';
 
 abstract class GetStocksUsecase {
-  Future<Either<StocksDataSourceError, StocksModel>> call();
+  Future<Either<StocksDataSourceError, StocksModel>> call(String stock);
 }
 
 class GetStocksUsecaseImpl implements GetStocksUsecase {
@@ -13,7 +13,7 @@ class GetStocksUsecaseImpl implements GetStocksUsecase {
   GetStocksUsecaseImpl(this.repository);
 
   @override
-  Future<Either<StocksDataSourceError, StocksModel>> call() {
-    return repository.getStocks();
+  Future<Either<StocksDataSourceError, StocksModel>> call(String stock) {
+    return repository.getStocks(stock);
   }
 }

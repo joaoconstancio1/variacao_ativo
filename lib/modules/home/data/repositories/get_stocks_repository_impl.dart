@@ -10,9 +10,10 @@ class GetStocksRepositoryImpl implements GetStocksRepository {
   GetStocksRepositoryImpl(this.datasource);
 
   @override
-  Future<Either<StocksDataSourceError, StocksModel>> getStocks() async {
+  Future<Either<StocksDataSourceError, StocksModel>> getStocks(
+      String stock) async {
     try {
-      final result = await datasource.getStocks();
+      final result = await datasource.getStocks(stock);
       return Right(result);
     } on StocksDataSourceError catch (e) {
       return Left(e);

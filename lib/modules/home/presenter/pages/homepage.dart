@@ -14,7 +14,7 @@ class _HomePageState extends State<HomePage> {
   initState() {
     super.initState();
 
-    context.read<GetStocksCubit>().getStocks();
+    context.read<GetStocksCubit>().getStocks('PETR4.SA');
 
     // _getStocks();
   }

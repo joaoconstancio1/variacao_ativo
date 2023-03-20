@@ -8,9 +8,9 @@ class GetStocksCubit extends Cubit<GetStocksState> {
 
   GetStocksCubit(this._usecase) : super(GetStocksInitialState());
 
-  void getStocks() async {
+  void getStocks(String stock) async {
     emit(const GetStocksLoadingState(true));
-    final result = await _usecase();
+    final result = await _usecase(stock);
 
     result.fold(
       (l) => emit(

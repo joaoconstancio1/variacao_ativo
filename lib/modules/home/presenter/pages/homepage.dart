@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:variacao_ativo/modules/home/domain/stocks_model.dart';
-import 'package:variacao_ativo/modules/home/external/stocks_ext.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:variacao_ativo/modules/home/presenter/cubit/get_stocks_cubit.dart';
+import 'package:variacao_ativo/modules/home/presenter/cubit/get_stocks_states.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,21 +11,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  StocksModel? stocks;
-
   initState() {
     super.initState();
-    _getStocks();
-  }
 
-  _getStocks() async {
-    final result = await StocksExternal().getStocks();
+    context.read<GetStocksCubit>().getStocks();
 
-    setState(() {
-      stocks = result;
-    });
-    print(result);
+    // _getStocks();
   }
+//StocksModel? stocks;
+
+  // _getStocks() async {
+  //   final result = await GetStocksDatasourceExt().getStocks();
+
+  //   setState(() {
+  //     stocks = result;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -35,38 +37,52 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: stocks == null
-            ? CircularProgressIndicator()
-            : Column(
-                children: [
-                  Table(
-                    border: TableBorder.all(color: Colors.black, width: 1.5),
-                    columnWidths: const {},
-                    children: const [
-                      TableRow(children: [
-                        Text(
-                          "Data",
-                          style: TextStyle(fontSize: 15.0),
-                        ),
-                        Text(
-                          "Valor",
-                          style: TextStyle(fontSize: 15.0),
-                        ),
-                        Text(
-                          "D-1",
-                        ),
-                        Text(
-                          "V/Total",
-                        ),
-                      ]),
-                    ],
+        child: Column(
+          children: [
+            const Text(
+              "Mostrando ações de PETR4",
+            ),
+            Table(
+              border: TableBorder.all(color: Colors.black, width: 1.5),
+              columnWidths: const {},
+              children: const [
+                TableRow(children: [
+                  Text(
+                    "Data",
                   ),
-                  Expanded(
+                  Text(
+                    "Valor",
+                  ),
+                  Text(
+                    "D-1",
+                  ),
+                  Text(
+                    "V/Total",
+                  ),
+                ]),
+              ],
+            ),
+            BlocConsumer<GetStocksCubit, GetStocksState>(
+              listener: (context, state) {
+                if (state is GetStocksErrorState) {
+                  debugPrint('erro no estado');
+                }
+              },
+              builder: (context, state) {
+                if (state is GetStocksInitialState ||
+                    state is GetStocksLoadingState) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state is GetStocksSuccessState) {
+                  return Expanded(
                     child: ListView.builder(
-                        itemCount: stocks?.indicators?.quote?[0].close?.length,
+                        itemCount:
+                            state.model.indicators?.quote?[0].close?.length,
                         itemBuilder: (context, index) {
-                          _logic(stocks?.timestamp,
-                              stocks?.indicators?.quote?[0].close);
+                          _logic(state.model.timestamp,
+                              state.model.indicators?.quote?[0].close);
 
                           return Table(
                             border: TableBorder.all(
@@ -90,9 +106,13 @@ class _HomePageState extends State<HomePage> {
                             ],
                           );
                         }),
-                  ),
-                ],
-              ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

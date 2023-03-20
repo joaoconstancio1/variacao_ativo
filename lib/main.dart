@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:variacao_ativo/modules/home/presenter/homepage.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:variacao_ativo/app_module.dart';
+import 'package:variacao_ativo/app_widget.dart';
+import 'package:variacao_ativo/modules/home/presenter/pages/homepage.dart';
 
 void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(),
-    );
-  }
+  return runApp(ModularApp(module: AppModule(), child: AppWidget()));
 }

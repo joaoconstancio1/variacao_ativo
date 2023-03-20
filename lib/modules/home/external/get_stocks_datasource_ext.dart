@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:variacao_ativo/modules/home/domain/stocks_model.dart';
+import 'package:variacao_ativo/modules/home/data/datasource/get_stocks_datasource.dart';
+import 'package:variacao_ativo/modules/home/data/models/stocks_model.dart';
 
-class StocksExternal {
+class GetStocksDatasourceExt implements GetStocksDatasource {
+  @override
   Future<StocksModel> getStocks() async {
     const symbol = 'PETR4.SA';
     const url =
@@ -10,7 +12,6 @@ class StocksExternal {
     final response = await Dio().get(url);
     final data = response.data['chart']['result'][0];
     final result = StocksModel.fromJson(data);
-    print(result);
     return result;
   }
 }

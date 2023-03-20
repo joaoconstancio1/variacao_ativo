@@ -11,22 +11,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
   initState() {
     super.initState();
 
     context.read<GetStocksCubit>().getStocks('PETR4.SA');
-
-    // _getStocks();
   }
-//StocksModel? stocks;
-
-  // _getStocks() async {
-  //   final result = await GetStocksDatasourceExt().getStocks();
-
-  //   setState(() {
-  //     stocks = result;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

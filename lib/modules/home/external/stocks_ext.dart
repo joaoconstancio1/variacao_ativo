@@ -9,7 +9,6 @@ class StocksExternal {
 
     final response = await Dio().get(url);
     final data = response.data['chart']['result'][0];
-    final prices = data['indicators']['quote'][0]['close'];
     final result = StocksModel.fromJson(data);
     print(result);
     return result;

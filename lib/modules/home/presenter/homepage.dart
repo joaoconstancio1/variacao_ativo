@@ -37,29 +37,62 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(8.0),
         child: stocks == null
             ? CircularProgressIndicator()
-            : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: stocks?.indicators?.quote?[0].close?.length,
-                itemBuilder: (context, index) {
-                  _logic(
-                      stocks?.timestamp, stocks?.indicators?.quote?[0].close);
-
-                  return Column(
-                    children: [
-                      // Text(
-                      //     '${DateTime.fromMillisecondsSinceEpoch(timeStamp * 1000)}'),
-                      // Text(
-                      //     '${stocks?.indicators?.quote?[0].close?[index].toStringAsFixed(2)}/'),
-                      Text(tableData[index]['Data']),
-                      Text(tableData[index]['Valor do ativo']
-                          .toStringAsFixed(2)),
-                      Text(tableData[index]['Variação diária']
-                          .toStringAsFixed(2)),
-                      Text(tableData[index]['Variação total']
-                          .toStringAsFixed(2)),
+            : Column(
+                children: [
+                  Table(
+                    border: TableBorder.all(color: Colors.black, width: 1.5),
+                    columnWidths: const {},
+                    children: const [
+                      TableRow(children: [
+                        Text(
+                          "Data",
+                          style: TextStyle(fontSize: 15.0),
+                        ),
+                        Text(
+                          "Valor",
+                          style: TextStyle(fontSize: 15.0),
+                        ),
+                        Text(
+                          "D-1",
+                        ),
+                        Text(
+                          "V/Total",
+                        ),
+                      ]),
                     ],
-                  );
-                }),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: stocks?.indicators?.quote?[0].close?.length,
+                        itemBuilder: (context, index) {
+                          _logic(stocks?.timestamp,
+                              stocks?.indicators?.quote?[0].close);
+
+                          return Table(
+                            border: TableBorder.all(
+                                color: Colors.black, width: 1.5),
+                            columnWidths: const {},
+                            children: [
+                              TableRow(children: [
+                                Text(
+                                  tableData[index]['date'],
+                                ),
+                                Text(
+                                  tableData[index]['value'].toStringAsFixed(2),
+                                ),
+                                Text(
+                                  '${tableData[index]['dayChange'].toStringAsFixed(2)} %',
+                                ),
+                                Text(
+                                  '${tableData[index]['overallChange'].toStringAsFixed(2)} %',
+                                ),
+                              ]),
+                            ],
+                          );
+                        }),
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -67,24 +100,35 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> tableData = [];
 
   _logic(List<int>? timestamps, prices) {
-    for (var i = 1; i < timestamps!.length; i++) {
-      var firstPrice = prices[0];
+    for (var i = 0; i < timestamps!.length; i++) {
+      if (i == 0) {
+        var dayChange = 0;
+        var overallChange = 0;
+        var currentDate =
+            DateTime.fromMillisecondsSinceEpoch(timestamps[i] * 1000);
+        var currentPrice = prices[i];
 
-      var currentDate =
-          DateTime.fromMillisecondsSinceEpoch(timestamps[i] * 1000);
-      var previousDate =
-          DateTime.fromMillisecondsSinceEpoch(timestamps[i - 1] * 1000);
-      var currentPrice = prices[i];
-      var previousPrice = prices[i - 1];
-      var dayChange = (currentPrice - previousPrice) / previousPrice * 100;
-      var overallChange = (currentPrice - firstPrice) / firstPrice * 100;
+        tableData.add({
+          'date': '${currentDate.day}/${currentDate.month}/${currentDate.year}',
+          'value': currentPrice,
+          'dayChange': dayChange,
+          'overallChange': overallChange,
+        });
+      } else {
+        var currentDate =
+            DateTime.fromMillisecondsSinceEpoch(timestamps[i] * 1000);
+        var currentPrice = prices[i];
+        var previousPrice = prices[i - 1];
+        var dayChange = (currentPrice - previousPrice) / previousPrice * 100;
+        var overallChange = (currentPrice - prices[0]) / prices[0] * 100;
 
-      tableData.add({
-        'Data': '${currentDate.day}/${currentDate.month}/${currentDate.year}',
-        'Valor do ativo': currentPrice,
-        'Variação diária': dayChange,
-        'Variação total': overallChange,
-      });
+        tableData.add({
+          'date': '${currentDate.day}/${currentDate.month}/${currentDate.year}',
+          'value': currentPrice,
+          'dayChange': dayChange,
+          'overallChange': overallChange,
+        });
+      }
     }
   }
 }
